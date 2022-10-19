@@ -40,3 +40,9 @@ debug: ## Enter debugging mode with pdb
 	# - docs: https://docs.python.org/3/library/pdb.html
 	#
 	python -m pdb src/train.py debug=default
+
+shape: ## Shape python source files
+	isort src
+	isort tests
+	black src
+	black tests

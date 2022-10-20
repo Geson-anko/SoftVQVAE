@@ -7,7 +7,7 @@ def softmax_with_temperature(tensor: torch.Tensor, temperature: float, dim: int,
     Args:
         tensor (torch.Tensor): Input tensor.
         temperature (float): Scaling value.
-        dim (int): Softmax dimention.
+        dim (int): Softmax dimension.
         dtype (Any): Output data type.
 
     Returns:
@@ -26,7 +26,7 @@ class SoftVectorQuantizing(nn.Module):
     This class have following methods and attributes.
     Attributes:
     - :attr:`num_quantizing` - CodeBook size (Quantizing vector num.)
-    - :attr:`quantizing_dim` - The vector dimention of CodeBook.
+    - :attr:`quantizing_dim` - The vector dimension of CodeBook.
     - :attr:`temperature` - Softmax temperature.
     - :attr:`_weight` - CodeBook (Quantizing) weight.
 
@@ -47,15 +47,15 @@ class SoftVectorQuantizing(nn.Module):
         dtype=None,
         device=None,
     ) -> None:
-        """Constuct this layer and set CodeBook (Quantizing) weight.
-        CodeBook weight is initialized by normal distribution with `mean` and `std`.
+        """Construct this layer and set CodeBook (Quantizing) weight. CodeBook weight is
+        initialized by normal distribution with `mean` and `std`.
 
         Args:
             num_quantizing (int): The number of quantizing vectors.
-            quantizing_dim (int): The dimention number of quantizing vectors.
+            quantizing_dim (int): The dimension number of quantizing vectors.
             temperature (float): Temperature of softmax.
             mean (float): The mean value of weight when initializing.
-            std (float): The standart deviation value of weight when initializing.
+            std (float): The standard deviation value of weight when initializing.
             dtype (Any): Data type.
             device (Any): Device.
         """
@@ -74,7 +74,7 @@ class SoftVectorQuantizing(nn.Module):
     def forward(self, x: torch.Tensor, detach_distributioin_grad: bool = True) -> tuple[torch.Tensor, torch.Tensor]:
         """Forward process of Soft Vector Quantizing.
         Args:
-            x (torch.Tensor): The last dimention of input tensor must be `self.quantizing_dim`.
+            x (torch.Tensor): The last dimension of input tensor must be `self.quantizing_dim`.
 
         Returns:
             quantizied (torch.Tensor): Soft vector quantized input tensor.
@@ -89,12 +89,15 @@ class SoftVectorQuantizing(nn.Module):
             q_distribution = q_distribution.detach()
         quantized = torch.matmul(q_distribution, self._weight)
 
-        return (quantized.view(input_shape), q_distribution.view((*input_shape[:-1], self.num_quantizing)))
+        return (
+            quantized.view(input_shape),
+            q_distribution.view((*input_shape[:-1], self.num_quantizing)),
+        )
 
     def compute_quantizing_distribution(self, x: torch.Tensor) -> torch.Tensor:
         """Compute quantizing distribution.
         Args:
-            x (torch.Tensor): Input tensor dimention must be 2.
+            x (torch.Tensor): Input tensor dimension must be 2.
 
         Returns:
             q_distribution (torch.Tensor): Quantizing distribution.

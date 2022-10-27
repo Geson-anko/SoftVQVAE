@@ -1,13 +1,14 @@
-import torch
 from typing import Literal
+
+import torch
 
 
 def kl_div_loss(mean: torch.Tensor, logvar: torch.Tensor, reduction: Literal["sum", "mean"] = "mean") -> torch.Tensor:
-    """compute loss `Kullback-leibler divergence` from Normal Distribution.
-    `mean` and `logvar` must be same shape, and their first dim is treated
-    as `batch_size`. `reduction` works along batch axis.
+    """compute loss `Kullback-leibler divergence` from Normal Distribution. `mean` and `logvar`
+    must be same shape, and their first dim is treated as `batch_size`. `reduction` works along
+    batch axis.
 
-    If reduction is unknow option, raises ValueError.
+    If reduction is unknown option, raises ValueError.
     """
     bsz = mean.size(0)
     logvar = logvar.view(bsz, -1)

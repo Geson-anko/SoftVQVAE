@@ -19,6 +19,6 @@ def test_kl_div_loss():
 
     try:
         f(mean, logvar, "aaaa")
-        assert False, "Exception is not throwed!"
+        assert False, "Exception is not thrown!"
     except ValueError:
         pass

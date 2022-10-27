@@ -1,12 +1,12 @@
 from typing import Any, List, Sequence
 
 import torch
-from torch import Tensor
 from pytorch_lightning import LightningModule
 from pytorch_lightning.loggers import TensorBoardLogger
+from torch import Tensor
+from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import MeanMetric
 from torchvision.utils import make_grid
-from torch.utils.tensorboard import SummaryWriter
 
 from ..utils.kl_div_loss import kl_div_loss
 

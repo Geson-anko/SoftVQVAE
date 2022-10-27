@@ -1,3 +1,5 @@
+#!/bin/bash
+
 python src/train.py \
     datamodule=mnist_all_to_training \
     model=mnist_vae \
@@ -8,4 +10,3 @@ python src/train.py \
     task_name="mnist_vae" \
     trainer.max_epochs=30 \
     model.r_loss_scaler=10000
-

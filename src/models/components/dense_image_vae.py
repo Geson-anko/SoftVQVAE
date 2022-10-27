@@ -61,7 +61,7 @@ class Decoder(nn.Module):
 
 
 class DenseImageVAE(nn.Module):
-    """Variational AutoEncoder"""
+    """Variational AutoEncoder."""
 
     def __init__(
         self,

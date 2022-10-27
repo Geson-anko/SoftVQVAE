@@ -5,10 +5,10 @@
 # If there is same folder name or file name in the target folder,
 # this doesn't copy them into target folder.
 
-import os
 import argparse
-from pathlib import Path
+import os
 import shutil
+from pathlib import Path
 
 
 def copy_logs(args) -> None:

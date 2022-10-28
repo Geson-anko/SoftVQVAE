@@ -1,9 +1,8 @@
 import torch
 
 from src.models.components import softvq_vae as mod
-
-from src.models.components.softvq import SoftVectorQuantizing
 from src.models.components.dense_image_vae import DenseImageVAE
+from src.models.components.softvq import SoftVectorQuantizing
 
 
 def test__init__():

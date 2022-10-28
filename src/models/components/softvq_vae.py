@@ -4,8 +4,8 @@ r"""
 Defines SoftVQ VAE here. We can use any VAE that meets the requirements.
 """
 
-from torch import Tensor
 import torch.nn as nn
+from torch import Tensor
 
 
 class SoftVQVAE(nn.Module):

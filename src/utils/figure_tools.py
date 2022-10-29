@@ -1,5 +1,5 @@
-"""This module defines functions to draw matplotlib figure, for viewing 
-experiment results.
+"""This module defines functions to draw matplotlib figure, for viewing experiment results.
+
 このモジュールでは、実験の経過をmatplotlibを用いて描画するための関数を定義します。
 """
 from typing import Optional
@@ -19,16 +19,15 @@ def create_irrq_prob_figure(
     label_fontdict: Optional[dict] = None,
     imshow_settings: Optional[dict] = None,
 ) -> figure.FigureBase:
-    """Create figure for logging image softvq vae.
-    `irrq` is short name of `i`nput_image, `r`econstruction_image,
-    `r`econstructed_`q`uantizing_image.
+    """Create figure for logging image softvq vae. `irrq` is short name of `i`nput_image,
+    `r`econstruction_image, `r`econstructed_`q`uantizing_image.
 
     Args:
         input_image (np.ndarray): Input of vae.
         reconstruction_image (np.ndarray): Output of vae.
         quantized_reconstruction_image (np.ndarray): Reconstructed quantized image.
         probability_distribution (np.ndarray): output `q_dist` of softvq.
-        figure (Optional[figure.FigureBase]): Ploting figure.
+        figure (Optional[figure.FigureBase]): Plotting figure.
         fontdict (Optional[dict]): The font settings of label.
         imshow_settings (Optional[dict]): If None, generate settings, `{vmin: 0.0, vmax: 1.0}`.
 

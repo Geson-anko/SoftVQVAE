@@ -4,6 +4,7 @@ torchvision>=0.11.0
 pytorch-lightning==1.7.1
 torchmetrics==0.10.0
 torchinfo==1.*
+matplotlib==3.*
 
 # --------- hydra --------- #
 hydra-core==1.2.0

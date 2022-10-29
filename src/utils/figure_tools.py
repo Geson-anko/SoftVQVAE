@@ -72,3 +72,66 @@ def create_irrq_prob_figure(
     pax.set_xlabel("vector index", fontdict=label_fontdict)
 
     return figure
+
+
+def make_grid_of_irrq_prob_figures(
+    row: int,
+    col: int,
+    input_images: np.ndarray,
+    reconstruction_images: np.ndarray,
+    reconstructed_quantizing_images: np.ndarray,
+    probability_distributioins: np.ndarray,
+    base_fig_size: tuple[int, int] = (6.4, 4.8),
+    label_fontdict: Optional[dict] = None,
+    imshow_settings: Optional[dict] = None,
+) -> figure.Figure:
+    """Make grid of figures for logging output of softvq vae. If the number of images is smaller
+    than `row x col`, empty subfigures are shown in tail of the figure.
+
+    Arg:
+        row (int): Row size of grid.
+        col (int): Column size of grid.
+        input_images (np.ndarray): Input of vae.
+        reconstruction_images (np.ndarray): Output of vae.
+        quantized_reconstruction_images (np.ndarray): Reconstructed quantized image.
+        probability_distributions (np.ndarray): output `q_dist` of softvq.
+        base_fig_size (tuple[int, int]): Base size of figure. Expanded by `row` and `col`.
+        fontdict (Optional[dict]): See `create_irrq_prob_figure` docs.
+        imshow_settings (Optional[dict]): See `create_irrq_prob_figure` docs.
+
+    Shape:
+        input_images: (num, width, height, channels)
+        reconstruction_images: (num, width, height, channels)
+        quantized_reconstruction_image: (num, width, height, channels)
+        probability_distribution: (num, num_quantizing)
+
+    Returns:
+        output_figure (figure.Figure)
+    """
+
+    figsize = (base_fig_size[0] * col, base_fig_size[1] * row)
+    num_images = len(input_images)
+
+    root_fig = plt.figure(figsize=figsize)
+
+    subfigs = root_fig.subfigures(row, col, False)
+    index = 0
+    for r in range(row):
+        for c in range(col):
+            if index < num_images:
+                fig: figure.SubFigure = subfigs[r][c]
+
+                in_img = input_images[index]
+                rec_img = reconstruction_images[index]
+                rec_q_img = reconstructed_quantizing_images[index]
+                prob = probability_distributioins[index]
+                fig = create_irrq_prob_figure(in_img, rec_img, rec_q_img, prob, fig, label_fontdict, imshow_settings)
+            else:
+                break
+
+            index += 1
+
+        if not (index < num_images):
+            break
+
+    return root_fig

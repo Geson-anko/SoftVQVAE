@@ -9,18 +9,23 @@ from src.utils import figure_tools as mod
 
 width, height, c = 32, 32, 3
 num_quantizing = 32
+num_probs = 10
 
 result_dir = "data/test_results"
 if not os.path.exists(result_dir):
     os.makedirs(result_dir)
 
 
-def test_create_irrq_prob_figure():
+@pytest.mark.parametrize("prob_dist_dim", [1, 2])
+def test_create_irrq_prob_figure(prob_dist_dim: int):
     f = mod.create_irrq_prob_figure
     input_image = np.random.rand(width, height, c)
     rec_image = np.random.rand(width, height, c)
     qr_image = np.random.rand(width, height, c)
-    prob = np.random.rand(num_quantizing)
+    if prob_dist_dim == 1:
+        prob = np.random.rand(num_quantizing)
+    elif prob_dist_dim == 2:
+        prob = np.random.rand(num_probs, num_quantizing)
 
     fig_out = f(input_image, rec_image, qr_image, prob)
     assert isinstance(fig_out, figure.FigureBase)
@@ -32,7 +37,7 @@ def test_create_irrq_prob_figure():
 
     assert fig is fig_out
 
-    fig.savefig(os.path.join(result_dir, f"{__name__}.test_create_irrq_prob_figure.png"))
+    fig.savefig(os.path.join(result_dir, f"{__name__}.test_create_irrq_prob_figure.dim{prob_dist_dim}.png"))
 
     plt.close()
 

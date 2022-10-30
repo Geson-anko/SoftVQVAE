@@ -26,7 +26,8 @@ def create_irrq_prob_figure(
         input_image (np.ndarray): Input of vae.
         reconstruction_image (np.ndarray): Output of vae.
         quantized_reconstruction_image (np.ndarray): Reconstructed quantized image.
-        probability_distribution (np.ndarray): output `q_dist` of softvq.
+        probability_distribution (np.ndarray): output `q_dist` of softvq. If this has multiple distributions,
+            the one of the distributions is selected randomly.
         figure (Optional[figure.FigureBase]): Plotting figure.
         fontdict (Optional[dict]): The font settings of label.
         imshow_settings (Optional[dict]): If None, generate settings, `{vmin: 0.0, vmax: 1.0}`.
@@ -35,7 +36,7 @@ def create_irrq_prob_figure(
         input_image: (width, height, channels)
         reconstruction_image: (width, height, channels)
         quantized_reconstruction_image: (width, height, channels)
-        probability_distribution: (num_quantizing, )
+        probability_distribution: (num_quantizing, ) | (num_dists, num_quantizing)
 
     Returns:
         output_figure (figure.FigureBase): If input figure is provided, returns same object.
@@ -65,10 +66,18 @@ def create_irrq_prob_figure(
     for ax in [ax0, ax1, ax2]:
         ax.set_axis_off()
 
+    # probability distribution
+    title = "probability distribution"
+    if probability_distribution.ndim == 2:
+        length = len(probability_distribution)
+        idx = np.random.randint(length)
+        probability_distribution = probability_distribution[idx]
+        title = f"{title} (vector {idx} of 0...{length-1})"
+
     pax = figure.add_subplot(gs[1, :])
     pax.bar(range(len(probability_distribution)), probability_distribution)
     pax.set_ylim(0, 1)
-    pax.set_title("probability distribution", fontdict=label_fontdict)
+    pax.set_title(title, fontdict=label_fontdict)
     pax.set_xlabel("vector index", fontdict=label_fontdict)
 
     return figure
@@ -103,7 +112,7 @@ def make_grid_of_irrq_prob_figures(
         input_images: (num, width, height, channels)
         reconstruction_images: (num, width, height, channels)
         quantized_reconstruction_image: (num, width, height, channels)
-        probability_distribution: (num, num_quantizing)
+        probability_distribution: (num, num_quantizing) | (num, num_dists, num_quantizing)
 
     Returns:
         output_figure (figure.Figure)

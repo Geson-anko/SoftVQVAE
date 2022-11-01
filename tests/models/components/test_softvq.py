@@ -33,7 +33,7 @@ def test__init__():
     assert dflt._weight.requires_grad
 
     if torch.cuda.is_available():
-        device = "cuda"
+        device = "cuda:0"
     else:
         device = "cpu"
 

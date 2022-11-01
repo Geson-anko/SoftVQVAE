@@ -23,6 +23,7 @@ def test_instantiate():
 def test_mnist_only_image(batch_size: int):
     data_dir = "data/"
     dm = MNISTOnlyImage(data_dir=data_dir, batch_size=batch_size)
+    dm.prepare_data()
 
     assert dm.data_train is None
     assert Path(data_dir, "MNISTDatasetOnlyImage").exists()

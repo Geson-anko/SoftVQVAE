@@ -26,6 +26,6 @@ optimizer:
 scheduler: null
 
 r_loss_scaler: 10000
-log_irrq_prob_row_col: [3,4]
+log_irrq_prob_row_col: [3, 4]
 log_latent_space_sample_num: 2048
 log_code_book_usage_sample_num: 2048

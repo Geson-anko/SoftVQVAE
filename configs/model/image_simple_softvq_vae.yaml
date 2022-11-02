@@ -1,0 +1,31 @@
+_target_: src.models.image_softvq_vae_lit_module.ImageSoftVQVAELitModule
+
+softvq_vae:
+  _target_: src.models.components.softvq_vae.SoftVQVAE
+  vae:
+    _target_: src.models.components.dense_image_vae.DenseImageVAE
+    input_size: 784
+    encoder_lin1_size: 256
+    encoder_lin2_size: 64
+    latent_size: 16
+    decoder_lin1_size: 64
+    decoder_lin2_size: 256
+
+  softvq:
+    _target_: src.models.components.softvq.SoftVectorQuantizing
+    num_quantizing: 32
+    quantizing_dim: ${...softvq_vae.vae.latent_size}
+    temperature: 1.0
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.0
+
+scheduler: null
+
+r_loss_scaler: 10000
+log_irrq_prob_row_col: [3, 4]
+log_latent_space_sample_num: 2048
+log_code_book_usage_sample_num: 2048

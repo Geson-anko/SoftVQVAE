@@ -15,13 +15,14 @@ from ..utils.kl_div_loss import kl_div_loss
 
 
 class ImageSoftVQVAELitModule(pl.LightningModule):
-    """SoftVQ VAE frame module class.
-    The forward pass of SoftVQ VAE module must return following values.
-        - x_hat (Tensor): Reconstructed input data.
-        - mean (Tensor): Mean tensor of encoder output of vae
-        - logvar (Tensor): log variant of encoder output of vae
-        - quantized (Tensor): Soft quantized latent space (mean).
-        - q_dist (Tensor): Quantizing distributioin (Attention map).
+    """SoftVQ VAE frame module class. The forward pass of SoftVQ VAE module must return following
+    values.
+
+    - x_hat (Tensor): Reconstructed input data.
+    - mean (Tensor): Mean tensor of encoder output of vae
+    - logvar (Tensor): log variant of encoder output of vae
+    - quantized (Tensor): Soft quantized latent space (mean).
+    - q_dist (Tensor): Quantizing distributioin (Attention map).
     """
 
     logger: TensorBoardLogger

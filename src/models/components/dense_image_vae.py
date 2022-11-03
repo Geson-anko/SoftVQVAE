@@ -29,6 +29,7 @@ class Encoder(nn.Module):
     def forward(self, x: Tensor) -> tuple[Tensor, Tensor]:
         """Returns mean and logvar."""
 
+        x = x.view(x.size(0), -1)
         h = self.main_layers(x)
         mean, logvar = self.mean_layer(h), self.logvar_layer(h)
 
@@ -57,6 +58,7 @@ class Decoder(nn.Module):
         )
 
     def forward(self, x: Tensor) -> Tensor:
+        x = x.view(x.size(0), -1)
         return self.main_layers(x)
 
 

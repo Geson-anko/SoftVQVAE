@@ -15,7 +15,6 @@ trainer:
   max_epochs: 100
   log_every_n_steps: 5
 
-
 callbacks:
   model_checkpoint:
     monitor: "training_step/reconstructed_quantizing_loss"
@@ -25,4 +24,3 @@ model:
   softvq_vae:
     softvq:
       temperature: 1.0
-    

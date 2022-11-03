@@ -52,7 +52,7 @@ class ImageSoftVQVAELitModule(pl.LightningModule):
     def forward(self, x: Tensor) -> tuple[Tensor, ...]:
         return self.softvq_vae(x)
 
-    def on_epoch_start(self) -> None:
+    def on_train_start(self) -> None:
         self.loss_inter_epoch.reset()
         self.r_loss_inter_epoch.reset()
         self.kl_div_loss_inter_epoch.reset()

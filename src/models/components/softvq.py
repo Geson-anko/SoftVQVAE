@@ -71,7 +71,7 @@ class SoftVectorQuantizing(nn.Module):
         )
         nn.init.normal_(self._weight, mean=mean, std=std)
 
-    def forward(self, x: torch.Tensor, detach_distributioin_grad: bool = True) -> tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, x: torch.Tensor, detach_distribution_grad: bool = True) -> tuple[torch.Tensor, torch.Tensor]:
         """Forward process of Soft Vector Quantizing.
         Args:
             x (torch.Tensor): The last dimension of input tensor must be `self.quantizing_dim`.
@@ -85,7 +85,7 @@ class SoftVectorQuantizing(nn.Module):
         h = x.view(-1, self.quantizing_dim)
 
         q_distribution = self.compute_quantizing_distribution(h)
-        if detach_distributioin_grad:
+        if detach_distribution_grad:
             q_distribution = q_distribution.detach()
         quantized = torch.matmul(q_distribution, self._weight)
 

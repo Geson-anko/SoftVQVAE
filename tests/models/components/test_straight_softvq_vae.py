@@ -1,8 +1,8 @@
 import torch
 
-from src.models.components.straight_softvq_vae import StraightSoftVQVAE
-from src.models.components.dense_image_vae import Encoder, Decoder
+from src.models.components.dense_image_vae import Decoder, Encoder
 from src.models.components.softvq import SoftVectorQuantizing
+from src.models.components.straight_softvq_vae import StraightSoftVQVAE
 
 batch_size = 16
 input_size = 784

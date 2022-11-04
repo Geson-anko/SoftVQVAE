@@ -7,8 +7,7 @@ from .dense_image_vae import sample
 
 
 class StraightSoftVQVAE(nn.Module):
-    """Straight SoftVQ VAE class.
-    This model data flow is,
+    """Straight SoftVQ VAE class. This model data flow is,
 
         X - [Encoder] -> mean, logvar - [sample] -> z
             - [SoftVQ] -> quantized - [Decoder] -> X_hat

@@ -15,6 +15,7 @@ clean-logs: ## Clean logs
 
 format: ## Run pre-commit hooks
 	pre-commit run -a
+	isort . --profile black --filter-files
 
 sync: ## Merge changes from main branch to your current branch
 	git pull

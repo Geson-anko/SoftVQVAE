@@ -76,9 +76,10 @@ def create_irrq_prob_figure(
 
     pax = figure.add_subplot(gs[1, :])
     pax.bar(range(len(probability_distribution)), probability_distribution)
-    pax.set_ylim(0, 1)
+    # pax.set_ylim(0, 1)
     pax.set_title(title, fontdict=label_fontdict)
     pax.set_xlabel("vector index", fontdict=label_fontdict)
+    pax.set_ylabel("prob (max 1.0)")
 
     return figure
 

@@ -35,7 +35,9 @@ def test_mnist_only_image(batch_size: int):
 
     assert len(dm.data_train) == 70000
 
-    batch = next(iter(dm.train_dataloader()))
+    data_loader = dm.train_dataloader()
+    assert data_loader.drop_last is False
+    batch = next(iter(data_loader))
     assert len(batch) == batch_size
     assert isinstance(batch, torch.Tensor)
     assert batch.dtype is torch.float32

@@ -11,7 +11,12 @@ class MNISTOnlyImage(LightningDataModule):
     """This data module loads all MNIST dataset only images."""
 
     def __init__(
-        self, data_dir: str = "data/", batch_size: int = 64, num_workers: int = 0, pin_memory: bool = False
+        self, 
+        data_dir: str = "data/", 
+        batch_size: int = 64, 
+        num_workers: int = 0, 
+        pin_memory: bool = False,
+        drop_last: bool = False
     ) -> None:
         super().__init__()
         self.save_hyperparameters(logger=False)
@@ -41,6 +46,7 @@ class MNISTOnlyImage(LightningDataModule):
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=True,
+            drop_last=self.hparams.drop_last
         )
 
     def teardown(self, stage: Optional[str] = None) -> None:

@@ -3,3 +3,4 @@ data_dir: ${paths.data_dir}
 batch_size: 2048
 num_workers: 0
 pin_memory: False
+drop_last: False

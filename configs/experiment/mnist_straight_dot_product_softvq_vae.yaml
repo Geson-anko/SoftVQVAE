@@ -7,7 +7,13 @@ defaults:
   - override /trainer: default.yaml
   - override /logger: tensorboard.yaml
 
-tags: ["Straight SoftVQ VAE", "image_straight_softvq_vae", "mnist", "Dot Product SoftVQ"]
+tags:
+  [
+    "Straight SoftVQ VAE",
+    "image_straight_softvq_vae",
+    "mnist",
+    "Dot Product SoftVQ",
+  ]
 test: False
 task_name: mnist-straight-softvq-vae
 

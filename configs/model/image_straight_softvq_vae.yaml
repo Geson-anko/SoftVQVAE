@@ -15,7 +15,7 @@ straight_softvq_vae:
     lin1_size: 64
     lin2_size: 256
     output_size: ${..encoder.input_size}
-    
+
   softvq:
     _target_: src.models.components.softvq.SoftVectorQuantizing
     num_quantizing: 32

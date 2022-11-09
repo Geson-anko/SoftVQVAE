@@ -22,7 +22,7 @@ def test_sample():
     std = torch.tensor([1.5, 3.0], dtype=torch.float)
     expand_std = std.view(2, 1).repeat((1, size))
 
-    out = f(expand_mean, torch.log(expand_std*expand_std))
+    out = f(expand_mean, torch.log(expand_std * expand_std))
     out_mean = out.mean(dim=1)
     out_std = out.std(dim=1)
     assert torch.all((out_mean - mean).abs() < error)

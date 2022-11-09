@@ -3,7 +3,8 @@ import torch.nn as nn
 from torch import Tensor
 
 
-def sample(mean: Tensor, std: Tensor) -> Tensor:
+def sample(mean: Tensor, logvar: Tensor) -> Tensor:
+    std = torch.exp(logvar / 2)
     return mean + torch.randn_like(std) * std
 
 
@@ -94,7 +95,7 @@ class DenseImageVAE(nn.Module):
         """Returns reconstructed data, mean and logvar value."""
         h = x.view(x.size(0), -1)
         mean, logvar = self.encoder.forward(h)
-        z = sample(mean, torch.exp(logvar / 2))
+        z = sample(mean, logvar)
         x_hat = self.decoder.forward(z).view(x.shape)
 
         return x_hat, mean, logvar

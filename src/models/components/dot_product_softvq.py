@@ -50,5 +50,5 @@ class DotProductSoftVQ(SoftVectorQuantizing):
         Shape:
             x: (batch, quantizing_dim)
         """
-        dot = torch.matmul(x, self._weight.T)
+        dot = torch.matmul(x, self._weight.T) / (self.quantizing_dim**0.5)
         return softmax_with_temperature(dot, self.temperature, dim=-1)

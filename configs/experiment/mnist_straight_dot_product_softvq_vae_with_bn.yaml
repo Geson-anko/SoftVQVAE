@@ -13,7 +13,7 @@ tags:
     "image_straight_softvq_vae",
     "mnist",
     "Dot Product SoftVQ",
-    "with Batch Normalization"
+    "with Batch Normalization",
   ]
 test: False
 task_name: mnist-straight-softvq-vae-with-bn

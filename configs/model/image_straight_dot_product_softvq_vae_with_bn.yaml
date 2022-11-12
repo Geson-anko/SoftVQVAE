@@ -1,0 +1,39 @@
+_target_: src.models.image_straight_softvq_vae_lit_module.ImageStraightSoftVQVAELitModule
+
+straight_softvq_vae:
+  _target_: src.models.components.straight_softvq_vae.StraightSoftVQVAE
+  encoder:
+    _target_: src.models.components.dense_image_vae_with_bn.Encoder
+    input_size: 784
+    lin1_size: 256
+    lin2_size: 64
+    latent_size: 16
+
+  decoder:
+    _target_: src.models.components.dense_image_vae_with_bn.Decoder
+    latent_size: ${..encoder.latent_size}
+    lin1_size: 64
+    lin2_size: 256
+    output_size: ${..encoder.input_size}
+
+  softvq:
+    _target_: src.models.components.dot_product_softvq.DotProductSoftVQ
+    num_quantizing: 32
+    quantizing_dim: ${..encoder.latent_size}
+    temperature: 1.0
+    mean: 0.0
+    std: 0.1
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.0
+
+scheduler: null
+
+r_loss_scaler: 10000
+kl_div_loss_scaler: 1.0
+log_ir_prob_row_col: [3, 4]
+log_latent_space_sample_num: 2048
+log_code_book_usage_sample_num: 2048

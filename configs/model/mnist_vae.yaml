@@ -1,6 +1,7 @@
 _target_: src.models.mnist_vae_module.MNISTLitVAEModule
 
 r_loss_scaler: 10000
+kl_div_loss_scaler: 1.0
 log_image_row_col: [8, 8]
 log_latent_space_sample_num: 1024
 

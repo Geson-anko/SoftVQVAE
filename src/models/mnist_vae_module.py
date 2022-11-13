@@ -21,6 +21,7 @@ class MNISTLitVAEModule(LightningModule):
         net: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
         r_loss_scaler: float = 1.0,
+        kl_div_loss_scaler:float = 1.0,
         log_image_row_col: Sequence[int] = (8, 8),
         log_latent_space_sample_num: int = 128,
     ) -> None:
@@ -42,7 +43,7 @@ class MNISTLitVAEModule(LightningModule):
     def forward(self, x: Tensor) -> tuple[Tensor, Tensor, Tensor]:
         return self.net(x)
 
-    def on_epoch_start(self) -> None:
+    def on_train_epoch_start(self) -> None:
         self.train_loss_inter_epoch.reset()
         self.train_rec_loss_inter_epoch.reset()
         self.train_kl_div_loss_inter_epoch.reset()
@@ -55,7 +56,7 @@ class MNISTLitVAEModule(LightningModule):
         rec_l = self.criterion(x, x_hat)
         kl_l = kl_div_loss(mean, logvar)
 
-        loss = rec_l * self.hparams.r_loss_scaler + kl_l
+        loss = rec_l * self.hparams.r_loss_scaler + kl_l * self.hparams.kl_div_loss_scaler
         return loss, rec_l, kl_l
 
     def training_step(self, batch: Any, batch_idx: int):
@@ -121,7 +122,7 @@ class MNISTLitVAEModule(LightningModule):
         tb_logger.add_histogram("latent_space/mean_distribution", mean_samples, self.global_step)
         tb_logger.add_histogram("latent_space/std_distribution", std_samples, self.global_step)
 
-    def on_training_epoch_end(self, outputs: List[Any]) -> None:
+    def on_train_epoch_end(self) -> None:
 
         self.log("inter_epoch/loss", self.train_loss_inter_epoch)
         self.log("inter_epoch/reconstruction_loss", self.train_rec_loss_inter_epoch)

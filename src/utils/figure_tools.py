@@ -61,7 +61,7 @@ def create_irrq_prob_figure(
 
     ax2 = figure.add_subplot(gs[0, 2])
     ax2.imshow(reconstructed_quantizing_image, **imshow_settings)
-    ax2.set_title("Reconstructed\nQuantizing Image", fontdict=label_fontdict)
+    ax2.set_title("Reconstructed\nQuantization Image", fontdict=label_fontdict)
 
     for ax in [ax0, ax1, ax2]:
         ax.set_axis_off()

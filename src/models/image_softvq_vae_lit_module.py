@@ -33,11 +33,18 @@ class ImageSoftVQVAELitModule(pl.LightningModule):
         optimizer: torch.optim.Optimizer,
         scheduler: Optional[torch.optim.lr_scheduler._LRScheduler] = None,
         r_loss_scaler: float = 1.0,
+        kl_div_loss_scaler: float = 1.0,
         log_irrq_prob_row_col: Sequence[int] = (3, 3),
         log_latent_space_sample_num: int = 128,
         log_code_book_usage_sample_num: int = 128,
+        log_random_sample_rrq_imgs_row_col: Sequence[int] = (3, 3),
     ) -> None:
         super().__init__()
+
+        assert hasattr(softvq_vae, "softvq")
+        assert hasattr(softvq_vae, "vae")
+        assert hasattr(softvq_vae.vae, "encoder")
+        assert hasattr(softvq_vae.vae, "decoder")
 
         self.save_hyperparameters(logger=False, ignore=["softvq_vae"])
         self.softvq_vae = softvq_vae
@@ -70,7 +77,7 @@ class ImageSoftVQVAELitModule(pl.LightningModule):
         q_l = F.mse_loss(quantized, mean.detach())
         rq_l = F.mse_loss(x, x_rq.detach())
 
-        loss = r_l * self.hparams.r_loss_scaler + kl_l + q_l
+        loss = r_l * self.hparams.r_loss_scaler + kl_l * self.hparams.kl_div_loss_scaler + q_l
 
         return loss, r_l, kl_l, q_l, rq_l
 
@@ -134,7 +141,7 @@ class ImageSoftVQVAELitModule(pl.LightningModule):
         rec_q_imgs = torch.cat(rec_q_imgs, dim=0).permute(psz).numpy()
         probs = torch.cat(probs, dim=0).numpy()
 
-        fontdict = {"fontsize": 7}
+        fontdict = {"fontsize": 5}
         imshow_settings = {"vmin": 0.0, "vmax": 1.0}
 
         figure = make_grid_of_irrq_prob_figures(
@@ -151,6 +158,62 @@ class ImageSoftVQVAELitModule(pl.LightningModule):
 
         tb_logger: SummaryWriter = self.logger.experiment
         tb_logger.add_figure("i-r-rq-prob-images", figure, self.global_step)
+
+    @torch.no_grad()
+    def log_random_sample_rrq_imgs(self):
+        """log reconstruction and reconstructed quantizing images from random sampled latent
+        space."""
+        row, col = self.hparams.log_random_sample_rrq_imgs_row_col
+        max_image_num = int(row * col)
+        batch = next(iter(self.trainer.datamodule.train_dataloader()))
+        batch_size = len(batch)
+        x = batch[:2].to(self.device)
+        _, mean, _, _, _ = self.forward(x)
+        latent_space_shape = mean.shape[1:]
+        data_shape = x.shape[1:]
+
+        probs = []
+        rec_imgs = []
+        rec_q_imgs = []
+        for i in range(0, max_image_num, batch_size):
+            if i + batch_size <= max_image_num:
+                bsz = batch_size
+            else:
+                bsz = max_image_num % batch_size
+            sampled_latent_data = torch.randn(bsz, *latent_space_shape, device=self.device)
+            quantized, q_dist = self.softvq_vae.softvq(sampled_latent_data)
+            x_rq = self.softvq_vae.vae.decoder(quantized).cpu().view(bsz, *data_shape)
+            x_hat = self.softvq_vae.vae.decoder(sampled_latent_data).cpu().view(bsz, *data_shape)
+            q_dist = q_dist.view(q_dist.size(0), -1, q_dist.size(-1)).cpu()
+
+            probs.append(q_dist)
+            rec_imgs.append(x_hat)
+            rec_q_imgs.append(x_rq)
+
+        psz = (0, 2, 3, 1)
+        rec_imgs = torch.cat(rec_imgs, dim=0).permute(psz).numpy()
+        rec_q_imgs = torch.cat(rec_q_imgs, dim=0).permute(psz).numpy()
+        probs = torch.cat(probs, dim=0).numpy()
+
+        in_imgs = np.zeros_like(rec_imgs)
+
+        fontdict = {"fontsize": 5}
+        imshow_settings = {"vmin": 0.0, "vmax": 1.0}
+
+        figure = make_grid_of_irrq_prob_figures(
+            row,
+            col,
+            in_imgs,
+            rec_imgs,
+            rec_q_imgs,
+            probs,
+            label_fontdict=fontdict,
+            imshow_settings=imshow_settings,
+            base_fig_size=(3.2, 2.4),
+        )
+
+        tb_logger: SummaryWriter = self.logger.experiment
+        tb_logger.add_figure("random-sample-r-rq-prob-images", figure, self.global_step)
 
     @torch.no_grad()
     def log_latent_space_distribution(self):
@@ -233,6 +296,7 @@ class ImageSoftVQVAELitModule(pl.LightningModule):
         self.log_latent_space_distribution()
         self.log_grid_of_irrq_prob_figure()
         self.log_codebook_average_usage()
+        self.log_random_sample_rrq_imgs()
 
     def configure_optimizers(self):
         optimizer = self.hparams.optimizer(params=self.parameters())

@@ -74,3 +74,14 @@ def test_forward():
 
     q, p = dflt.forward(x, False)
     assert p.requires_grad
+
+
+def test_quantize_from_q_dist():
+    cls = softvq.SoftVectorQuantizing
+    nq, qd = 16, 8
+    dflt = cls(nq, qd)
+
+    q_dist = torch.ones(nq) / nq
+    out = dflt.quantize_from_q_dist(q_dist)
+
+    assert torch.nn.functional.mse_loss(out, dflt._weight.mean(0)).item() < 1e-8

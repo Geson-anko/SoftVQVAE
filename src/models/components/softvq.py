@@ -87,7 +87,7 @@ class SoftVectorQuantizing(nn.Module):
         q_distribution = self.compute_quantizing_distribution(h)
         if detach_distribution_grad:
             q_distribution = q_distribution.detach()
-        quantized = torch.matmul(q_distribution, self._weight)
+        quantized = self.quantize_from_q_dist(q_distribution)
 
         return (
             quantized.view(input_shape),
@@ -105,3 +105,14 @@ class SoftVectorQuantizing(nn.Module):
         delta = self._weight.unsqueeze(0) - x.unsqueeze(1)  # Broadcasting to (B, Q, E)
         distance = -torch.mean(delta * delta, dim=-1)
         return softmax_with_temperature(distance, self.temperature, dim=-1)
+
+    def quantize_from_q_dist(self, q_dist: torch.Tensor) -> torch.Tensor:
+        """Quantize from quantizing distribution (q_dist)
+        Args:
+            q_dist (torch.Tensor): Final dimension of this tensor must be `num_quantizing`.
+
+        Returns:
+            quantized: (torch.Tensor): Quantized data.
+        """
+
+        return torch.matmul(q_dist, self._weight)

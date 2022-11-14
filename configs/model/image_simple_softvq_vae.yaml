@@ -3,7 +3,7 @@ _target_: src.models.image_softvq_vae_lit_module.ImageSoftVQVAELitModule
 softvq_vae:
   _target_: src.models.components.softvq_vae.SoftVQVAE
   vae:
-    _target_: src.models.components.dense_image_vae.DenseImageVAE
+    _target_: src.models.components.dense_image_vae_with_bn.DenseImageVAEWithBN
     input_size: 784
     encoder_lin1_size: 256
     encoder_lin2_size: 64
@@ -14,7 +14,7 @@ softvq_vae:
   softvq:
     _target_: src.models.components.softvq.SoftVectorQuantizing
     num_quantizing: 32
-    quantizing_dim: ${...softvq_vae.vae.latent_size}
+    quantizing_dim: ${..vae.latent_size}
     temperature: 1.0
 
 optimizer:
@@ -26,6 +26,8 @@ optimizer:
 scheduler: null
 
 r_loss_scaler: 10000
+kl_div_loss_scaler: 1.0
 log_irrq_prob_row_col: [3, 4]
 log_latent_space_sample_num: 2048
 log_code_book_usage_sample_num: 2048
+log_random_sample_rrq_imgs_row_col: [3, 4]

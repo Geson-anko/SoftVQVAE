@@ -21,7 +21,7 @@ class MNISTLitVAEModule(LightningModule):
         net: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
         r_loss_scaler: float = 1.0,
-        kl_div_loss_scaler:float = 1.0,
+        kl_div_loss_scaler: float = 1.0,
         log_image_row_col: Sequence[int] = (8, 8),
         log_latent_space_sample_num: int = 128,
     ) -> None:

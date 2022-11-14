@@ -3,7 +3,11 @@ import omegaconf
 import pyrootutils
 import pytest
 
-from src.models.components.dense_image_vae import Decoder, DenseImageVAE, Encoder
+from src.models.components.dense_image_vae_with_bn import (
+    Decoder,
+    DenseImageVAEWithBN,
+    Encoder,
+)
 from src.models.components.softvq import SoftVectorQuantizing
 from src.models.components.softvq_vae import SoftVQVAE
 from src.models.image_softvq_vae_lit_module import ImageSoftVQVAELitModule
@@ -19,7 +23,7 @@ def test_instantiate():
 
     assert isinstance(instance, ImageSoftVQVAELitModule)
     assert isinstance(instance.softvq_vae, SoftVQVAE)
-    assert isinstance(instance.softvq_vae.vae, DenseImageVAE)
+    assert isinstance(instance.softvq_vae.vae, DenseImageVAEWithBN)
     assert isinstance(instance.softvq_vae.vae.encoder, Encoder)
     assert isinstance(instance.softvq_vae.vae.decoder, Decoder)
     assert isinstance(instance.softvq_vae.softvq, SoftVectorQuantizing)

@@ -42,6 +42,7 @@ class ImageStraightSoftVQVAELitModule(LightningModule):
         log_ir_prob_row_col: Sequence[int] = (3, 3),
         log_latent_space_sample_num: int = 128,
         log_code_book_usage_sample_num: int = 128,
+        log_random_sample_r_imgs_row_col: Sequence[int] = (3, 3),
     ) -> None:
         super().__init__()
 
@@ -210,6 +211,61 @@ class ImageStraightSoftVQVAELitModule(LightningModule):
         tb_logger.add_figure("codebook_average_usage/per_vector", fig, self.global_step)
         self.log("codebook_average_usage/usage", avg_usage, on_epoch=True)
 
+    @torch.no_grad()
+    def log_random_sample_r_imgs(self):
+        """log reconstructed quantizing images from random sampled quantizing distribution."""
+        row, col = self.hparams.log_random_sample_r_imgs_row_col
+        max_image_num = int(row * col)
+        batch = next(iter(self.trainer.datamodule.train_dataloader()))
+        batch_size = len(batch)
+        x = batch[:2].to(self.device)
+        mean, _ = self.straight_softvq_vae.encoder(x)
+        
+        latent_space_shape = mean.shape[1:]
+        data_shape = x.shape[1:]
+
+        probs = []
+        rec_imgs = []
+        for i in range(0, max_image_num, batch_size):
+            if i + batch_size <= max_image_num:
+                bsz = batch_size
+            else:
+                bsz = max_image_num % batch_size
+            sampled_latent_data = torch.randn(bsz, *latent_space_shape, device=self.device)
+            quantized, q_dist = self.straight_softvq_vae.softvq(sampled_latent_data)
+            x_hat  = self.straight_softvq_vae.decoder(quantized)
+
+            x_hat = x_hat.cpu().view(bsz, *data_shape)
+            q_dist = q_dist.view(q_dist.size(0), -1, q_dist.size(-1)).cpu()
+
+            probs.append(q_dist)
+            rec_imgs.append(x_hat)
+
+        psz = (0, 2, 3, 1)
+        rec_imgs = torch.cat(rec_imgs, dim=0).permute(psz).numpy()
+        probs = torch.cat(probs, dim=0).numpy()
+        
+        in_imgs = np.zeros_like(rec_imgs)
+        rec_q_imgs = np.zeros_like(rec_imgs)
+
+        fontdict = {"fontsize": 5}
+        imshow_settings = {"vmin": 0.0, "vmax": 1.0}
+
+        figure = make_grid_of_irrq_prob_figures(
+            row,
+            col,
+            in_imgs,
+            rec_imgs,
+            rec_q_imgs,
+            probs,
+            label_fontdict=fontdict,
+            imshow_settings=imshow_settings,
+            base_fig_size=(3.2, 2.4),
+        )
+
+        tb_logger: SummaryWriter = self.logger.experiment
+        tb_logger.add_figure("random-sample-r-prob-images", figure, self.global_step)
+
     def on_train_epoch_end(self) -> None:
         header = "inter_epoch/{0}"
         self.log(header.format("loss"), self.loss_inter_epoch, on_epoch=True)
@@ -219,6 +275,7 @@ class ImageStraightSoftVQVAELitModule(LightningModule):
         self.log_latent_space_distribution()
         self.log_grid_of_ir_prob_figure()
         self.log_codebook_average_usage()
+        self.log_random_sample_r_imgs()
 
     def configure_optimizers(self):
         optimizer = self.hparams.optimizer(params=self.parameters())

@@ -7,9 +7,9 @@ defaults:
   - override /trainer: default.yaml
   - override /logger: tensorboard.yaml
 
-tags: ["Straight SoftVQ VAE", "image_straight_softvq_vae", "mnist"]
+tags: ["Straight SoftVQ VAE", "image_straight_softvq_vae", "mnist", "with-bn"]
 test: False
-task_name: mnist-straight-softvq-vae
+task_name: mnist-straight-softvq-vae-with-bn
 
 trainer:
   max_epochs: 100
@@ -23,9 +23,9 @@ callbacks:
     monitor: "training_step/reconstruction_loss"
 
 model:
-  r_loss_scaler: 50000
+  r_loss_scaler: 10000
   kl_div_loss_scaler: 1.0
   straight_softvq_vae:
     softvq:
-      num_quantizing: 128
+      num_quantizing: 32
       temperature: 1.0

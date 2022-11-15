@@ -3,7 +3,7 @@ import omegaconf
 import pyrootutils
 import pytest
 
-from src.models.components.dense_image_vae import Decoder, Encoder
+from src.models.components.dense_image_vae_with_bn import Decoder, Encoder
 from src.models.components.softvq import SoftVectorQuantizing
 from src.models.components.straight_softvq_vae import StraightSoftVQVAE
 from src.models.image_straight_softvq_vae_lit_module import (

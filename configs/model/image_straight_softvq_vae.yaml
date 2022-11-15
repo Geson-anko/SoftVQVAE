@@ -3,14 +3,14 @@ _target_: src.models.image_straight_softvq_vae_lit_module.ImageStraightSoftVQVAE
 straight_softvq_vae:
   _target_: src.models.components.straight_softvq_vae.StraightSoftVQVAE
   encoder:
-    _target_: src.models.components.dense_image_vae.Encoder
+    _target_: src.models.components.dense_image_vae_with_bn.Encoder
     input_size: 784
     lin1_size: 256
     lin2_size: 64
     latent_size: 16
 
   decoder:
-    _target_: src.models.components.dense_image_vae.Decoder
+    _target_: src.models.components.dense_image_vae_with_bn.Decoder
     latent_size: ${..encoder.latent_size}
     lin1_size: 64
     lin2_size: 256
@@ -37,3 +37,4 @@ kl_div_loss_scaler: 1.0
 log_ir_prob_row_col: [3, 4]
 log_latent_space_sample_num: 2048
 log_code_book_usage_sample_num: 2048
+log_random_sample_r_imgs_row_col: [3, 4]

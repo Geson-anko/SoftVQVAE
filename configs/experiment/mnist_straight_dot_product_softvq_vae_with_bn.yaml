@@ -32,7 +32,7 @@ callbacks:
 
 model:
   r_loss_scaler: 10000
-  kl_div_loss_scaler: 0.0001
+  kl_div_loss_scaler: 1.0
   straight_softvq_vae:
     softvq:
       num_quantizing: 32

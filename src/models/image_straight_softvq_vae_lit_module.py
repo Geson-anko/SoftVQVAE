@@ -220,7 +220,7 @@ class ImageStraightSoftVQVAELitModule(LightningModule):
         batch_size = len(batch)
         x = batch[:2].to(self.device)
         mean, _ = self.straight_softvq_vae.encoder(x)
-        
+
         latent_space_shape = mean.shape[1:]
         data_shape = x.shape[1:]
 
@@ -233,7 +233,7 @@ class ImageStraightSoftVQVAELitModule(LightningModule):
                 bsz = max_image_num % batch_size
             sampled_latent_data = torch.randn(bsz, *latent_space_shape, device=self.device)
             quantized, q_dist = self.straight_softvq_vae.softvq(sampled_latent_data)
-            x_hat  = self.straight_softvq_vae.decoder(quantized)
+            x_hat = self.straight_softvq_vae.decoder(quantized)
 
             x_hat = x_hat.cpu().view(bsz, *data_shape)
             q_dist = q_dist.view(q_dist.size(0), -1, q_dist.size(-1)).cpu()
@@ -244,7 +244,7 @@ class ImageStraightSoftVQVAELitModule(LightningModule):
         psz = (0, 2, 3, 1)
         rec_imgs = torch.cat(rec_imgs, dim=0).permute(psz).numpy()
         probs = torch.cat(probs, dim=0).numpy()
-        
+
         in_imgs = np.zeros_like(rec_imgs)
         rec_q_imgs = np.zeros_like(rec_imgs)
 

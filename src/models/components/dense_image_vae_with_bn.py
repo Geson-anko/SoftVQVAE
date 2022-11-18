@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from .dense_image_vae import sample
+from .vae_tools import sample
 
 
 class Encoder(nn.Module):

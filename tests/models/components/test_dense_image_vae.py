@@ -12,23 +12,6 @@ decoder_lin2_size = 256
 output_size = input_size
 
 
-def test_sample():
-    size = 1_000_000
-    error = 0.1
-    f = mod.sample
-
-    mean = torch.tensor([1.0, 2.0], dtype=torch.float)
-    expand_mean = mean.view(2, 1).repeat((1, size))
-    std = torch.tensor([1.5, 3.0], dtype=torch.float)
-    expand_std = std.view(2, 1).repeat((1, size))
-
-    out = f(expand_mean, torch.log(expand_std * expand_std))
-    out_mean = out.mean(dim=1)
-    out_std = out.std(dim=1)
-    assert torch.all((out_mean - mean).abs() < error)
-    assert torch.all((out_std - std).abs() < error)
-
-
 def test_Encoder():
     encoder = mod.Encoder(input_size, encoder_lin1_size, encoder_lin2_size, latent_size)
 

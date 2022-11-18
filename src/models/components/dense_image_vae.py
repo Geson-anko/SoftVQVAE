@@ -1,11 +1,7 @@
-import torch
 import torch.nn as nn
 from torch import Tensor
 
-
-def sample(mean: Tensor, logvar: Tensor) -> Tensor:
-    std = torch.exp(logvar / 2)
-    return mean + torch.randn_like(std) * std
+from .vae_tools import sample
 
 
 class Encoder(nn.Module):

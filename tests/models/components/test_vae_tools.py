@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 
 from src.models.components import vae_tools as mod
-from src.models.components.dense_image_vae import Encoder, Decoder
+from src.models.components.dense_image_vae import Decoder, Encoder
+
 
 def test_MeanAndLogvar():
     cls = mod.MeanAndLogvar
@@ -21,6 +22,7 @@ def test_MeanAndLogvar():
     assert out1.shape == out2.shape
     assert out1.dtype == out2.dtype
 
+
 def test_sample():
     size = 1_000_000
     error = 0.1
@@ -36,14 +38,14 @@ def test_sample():
     out_std = out.std(dim=1)
     assert torch.all((out_mean - mean).abs() < error)
     assert torch.all((out_std - std).abs() < error)
-    
+
 
 def test_VariationalAutoEncoder():
     cls = mod.VariationalAutoEncoder
-    
+
     encoder = Encoder(784, 256, 64, 16)
     decoder = Decoder(16, 64, 256, 784)
-    
+
     vae = cls(encoder, decoder)
 
     assert vae.encoder is encoder

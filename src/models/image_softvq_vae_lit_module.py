@@ -219,28 +219,32 @@ class ImageSoftVQVAELitModule(pl.LightningModule):
     def log_latent_space_distribution(self):
         """Log distribution histogram of latent space to logger."""
         sample_size = self.hparams.log_latent_space_sample_num
-        mean_samples, std_samples = [], []
+        mean_samples, std_samples, quantized_samples = [], [], []
         remain_num = sample_size
         for batch in self.trainer.datamodule.train_dataloader():
             x = batch
-            _, mean, logvar, _, _ = self.forward(x.to(self.device))
+            _, mean, logvar, quantized, _ = self.forward(x.to(self.device))
             mean = mean.cpu()
             std = torch.exp(0.5 * logvar).cpu()
             if mean.size(0) < remain_num:
                 mean_samples.append(mean)
                 std_samples.append(std)
+                quantized_samples.append(quantized)
                 remain_num -= mean.size(0)
             else:
                 mean_samples.append(mean[:remain_num])
                 std_samples.append(std[:remain_num])
+                quantized_samples.append(quantized[:remain_num])
                 break
 
         mean_samples = torch.cat(mean_samples).flatten()
         std_samples = torch.cat(std_samples).flatten()
+        quantized_samples = torch.cat(quantized_samples).flatten()
 
         tb_logger: SummaryWriter = self.logger.experiment
         tb_logger.add_histogram("latent_space/mean_distribution", mean_samples, self.global_step)
         tb_logger.add_histogram("latent_space/std_distribution", std_samples, self.global_step)
+        tb_logger.add_histogram("latent_space/quantized_distribution", quantized_samples, self.global_step)
 
     @torch.no_grad()
     def log_codebook_average_usage(self):

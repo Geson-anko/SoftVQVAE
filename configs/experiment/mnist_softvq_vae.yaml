@@ -1,0 +1,26 @@
+# @package _global_
+
+defaults:
+  - override /datamodule: mnist_only_image
+  - override /model: image_simple_softvq_vae
+  - override /callbacks: for_mnist_vae
+  - override /trainer: default.yaml
+  - override /logger: tensorboard.yaml
+
+tags: ["SoftVQ VAE", "image_simple_softvq_vae", "mnist"]
+test: False
+task_name: mnist-softvq-vae
+
+trainer:
+  max_epochs: 100
+  log_every_n_steps: 5
+
+callbacks:
+  model_checkpoint:
+    monitor: "training_step/reconstructed_quantizing_loss"
+
+model:
+  r_loss_scaler: 10000
+  softvq_vae:
+    softvq:
+      temperature: 1.0

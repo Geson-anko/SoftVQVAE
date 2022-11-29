@@ -1,0 +1,6 @@
+defaults:
+  - image_simple_softvq_vae.yaml
+
+softvq_vae:
+  softvq:
+    _target_: src.models.components.dot_product_softvq.DotProductSoftVQ

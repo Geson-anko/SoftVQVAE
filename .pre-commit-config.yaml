@@ -22,7 +22,7 @@ repos:
     rev: 22.6.0
     hooks:
       - id: black
-        args: [--line-length, "99"]
+        args: [".", "--line-length=120", "--target-version=py310"]
 
   # python import sorting
   - repo: https://github.com/PyCQA/isort
@@ -111,7 +111,7 @@ repos:
     rev: 1.4.0
     hooks:
       - id: nbqa-black
-        args: ["--line-length=99"]
+        args: ["--line-length=120"]
       - id: nbqa-isort
         args: ["--profile=black"]
       - id: nbqa-flake8

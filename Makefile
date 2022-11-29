@@ -14,6 +14,7 @@ clean-logs: ## Clean logs
 	rm -rf logs/**
 
 format: ## Run pre-commit hooks
+	isort . --profile black --filter-files
 	pre-commit run -a
 
 sync: ## Merge changes from main branch to your current branch

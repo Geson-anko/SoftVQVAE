@@ -1,0 +1,5 @@
+_target_: src.datamodules.mnist_all_to_training.MNISTAllToTraining
+data_dir: ${paths.data_dir}
+batch_size: 2048
+num_workers: 0
+pin_memory: False

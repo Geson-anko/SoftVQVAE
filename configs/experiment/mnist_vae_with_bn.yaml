@@ -1,0 +1,22 @@
+# @package _global_
+
+defaults:
+  - override /datamodule: mnist_all_to_training
+  - override /model: mnist_vae
+  - override /callbacks: for_mnist_vae
+  - override /trainer: default.yaml
+  - override /logger: tensorboard.yaml
+
+tags: ["mnist", "vae", "with_bn"]
+test: False
+task_name: mnist-vae
+
+trainer:
+  max_epochs: 100
+  log_every_n_steps: 5
+
+model:
+  net:
+    _target_: src.models.components.dense_image_vae_with_bn.DenseImageVAEWithBN
+  r_loss_scaler: 10000
+  kl_div_loss_scaler: 1.0

@@ -1,10 +1,9 @@
 # @package _global_
 
-
 hydra:
   mode: "MULTIRUN" # set hydra to multirun by default if this config is attached
   sweeper:
     params:
-      model.straight_softvq_vae.softvq.temperature: 0.01, 0.022, 0.46, 0.1, 0.22, 0.46, 1.0, 2.2, 4.6, 10.0 # Exponentialy [0.01~10]
+      model.straight_softvq_vae.softvq.temperature: 0.01, 0.022, 0.46, 0.1, 0.22, 0.46, 1.0, 2.2, 4.6, 10.0 # Exponentially [0.01~10]
       model.straight_softvq_vae.encoder.latent_size: 8, 16, 32, 64
       model.straight_softvq_vae.softvq.num_quantizing: 8, 16, 32, 64, 128
